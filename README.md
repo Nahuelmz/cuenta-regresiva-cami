@@ -6,21 +6,29 @@ Una cuenta regresiva hasta el reencuentro: **miércoles 1 de julio, 14:30 (hora 
 
 Doble clic en `index.html` y listo. Funciona offline.
 
-## Cambiar las fotos
+## Las fotos (una por día)
 
-1. Copiá tus fotos a la carpeta `photos/`.
+La página muestra **una sola foto por día** y va cambiando sola cada día, a la
+medianoche de Argentina. Cuando se terminan, vuelve a empezar desde la primera.
+Está anclada al huso argentino para que vos (de viaje) y Cami vean siempre la
+misma foto el mismo día.
+
+Para cargarlas:
+
+1. Copiá todas tus fotos a la carpeta `photos/`.
 2. Abrí `index.html` y buscá el bloque `const PHOTOS = [`.
-3. Por cada foto, completá `src`:
+3. Sumá la ruta de cada foto:
 
 ```js
 const PHOTOS = [
-  { src: "photos/foto1.jpg" },
-  { src: "photos/foto2.jpg" },
-  // ...podés agregar o sacar las que quieras
+  "photos/foto1.jpg",
+  "photos/foto2.jpg",
+  "photos/foto3.jpg",
+  // ...todas las que quieras
 ];
 ```
 
-Mientras `src` esté en `""` se muestra un placeholder con un corazón.
+Si la lista está vacía, se muestra un placeholder con un corazón.
 
 ## (Opcional) Barra de progreso del viaje
 
