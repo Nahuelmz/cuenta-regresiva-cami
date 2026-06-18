@@ -277,13 +277,22 @@
   }
 
   @media (max-width:560px){
+    /* compacto para que entre todo en una pantalla, sin scroll */
+    .wrap{ padding:1.6rem 1.25rem 1.8rem; }
+    .kicker{ margin-bottom:.85rem; letter-spacing:.3em; }
+    h1{ font-size:clamp(1.5rem,6.6vw,1.95rem); line-height:1.1; margin-bottom:.4rem; }
+    .subtitle{ font-size:.96rem; margin-bottom:1.3rem; max-width:32ch; }
+
     /* todo el tiempo en UNA sola línea */
-    .countdown{ gap:.4rem; flex-wrap:nowrap; align-items:baseline; }
+    .countdown{ gap:.4rem; flex-wrap:nowrap; align-items:baseline; margin-bottom:1.6rem; }
     .sep{ display:none; }
     .unit{ flex:1 1 0; }
     .unit .num{ font-size:clamp(1.6rem,11vw,2.6rem); }
     .unit .lbl{ font-size:.5rem; letter-spacing:.08em; margin-top:.5rem; }
     .unit--sec .num{ font-size:clamp(1.05rem,7vw,1.7rem); }
+
+    .polaroid{ width:58vw; max-width:270px; padding:.7rem .7rem 1.4rem; }
+    .signoff{ margin-top:1.2rem; }
   }
 </style>
 </head>
