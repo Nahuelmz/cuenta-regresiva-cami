@@ -8,10 +8,10 @@ Doble clic en `index.html` y listo. Funciona offline.
 
 ## Las fotos (una por día)
 
-La página muestra **una sola foto por día** y va cambiando sola cada día, a la
-medianoche de Argentina. Cuando se terminan, vuelve a empezar desde la primera.
-Está anclada al huso argentino para que vos (de viaje) y Cami vean siempre la
-misma foto el mismo día.
+La página muestra **una foto por día, en orden**: la primera de la lista el
+primer día (18/6), la segunda el 19/6, y así hasta el reencuentro. El cambio
+ocurre a la medianoche de Argentina, así vos (de viaje) y Cami ven siempre la
+misma foto el mismo día. Al llegar al final, queda fija en la última.
 
 Para cargarlas:
 

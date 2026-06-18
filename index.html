@@ -119,7 +119,7 @@
   .countdown{
     display:flex;
     justify-content:center;
-    align-items:flex-start;
+    align-items:baseline;
     gap:clamp(.4rem,2.5vw,1.6rem);
     flex-wrap:nowrap;
     margin-bottom:3.6rem;
@@ -138,6 +138,12 @@
     letter-spacing:-.02em;
     text-shadow:0 1px 0 #fff6, 0 2px 12px var(--shadow);
   }
+  /* los segundos, más chicos y un punto más tenues — para no poner nervioso 🙂 */
+  .unit--sec .num{
+    font-size:clamp(1.6rem,6vw,3.2rem);
+    color:var(--rust);
+    opacity:.85;
+  }
   .unit .lbl{
     display:block;
     text-transform:uppercase;
@@ -149,11 +155,9 @@
   }
   .sep{
     font-family:"Fraunces", serif;
-    font-size:clamp(2rem,8vw,4.5rem);
+    font-size:clamp(1.6rem,6vw,3.4rem);
     color:var(--rose);
     line-height:.92;
-    align-self:flex-start;
-    margin-top:.1em;
     user-select:none;
   }
 
@@ -273,9 +277,13 @@
   }
 
   @media (max-width:560px){
+    /* todo el tiempo en UNA sola línea */
+    .countdown{ gap:.4rem; flex-wrap:nowrap; align-items:baseline; }
     .sep{ display:none; }
-    .countdown{ gap:.9rem 1.4rem; flex-wrap:wrap; }
-    .unit{ flex:1 0 38%; }
+    .unit{ flex:1 1 0; }
+    .unit .num{ font-size:clamp(1.6rem,11vw,2.6rem); }
+    .unit .lbl{ font-size:.5rem; letter-spacing:.08em; margin-top:.5rem; }
+    .unit--sec .num{ font-size:clamp(1.05rem,7vw,1.7rem); }
   }
 </style>
 </head>
@@ -297,7 +305,7 @@
       <div class="sep">·</div>
       <div class="unit"><span class="num" id="m">00</span><span class="lbl">Minutos</span></div>
       <div class="sep">·</div>
-      <div class="unit"><span class="num" id="s">00</span><span class="lbl">Segundos</span></div>
+      <div class="unit unit--sec"><span class="num" id="s">00</span><span class="lbl">Segundos</span></div>
     </section>
 
     <!-- progreso del viaje (se muestra solo si configurás TRIP_START) -->
@@ -323,34 +331,32 @@
    ║  CONFIGURACIÓN — esto es lo único que vas a tocar              ║
    ╚══════════════════════════════════════════════════════════════╝ */
 
-// 📅 Fecha del reencuentro. El "-03:00" es la hora de Argentina:
-//    así el contador es correcto aunque abras la página en otro huso.
-const TARGET = new Date("2026-07-01T14:30:00-03:00");
+// 📅 El día del reencuentro (medianoche de Argentina). El "-03:00" es el huso
+//    argentino, así el contador es correcto aunque abras la página en otro huso.
+const TARGET = new Date("2026-07-01T00:00:00-03:00");
 
 // 🧳 (OPCIONAL) El día que arrancó el viaje. Si lo completás, aparece
 //    una barrita de progreso "qué tanto falta". Dejalo en null para ocultarla.
 //    Ejemplo: new Date("2026-06-03T10:00:00-03:00")
 const TRIP_START = null;
 
-// 🖼️ FOTOS — la "foto del día".
-//    Pasame todas las que quieras. La página muestra UNA por día y va cambiando
-//    sola cada día (a la medianoche de Argentina). Cuando se terminan, arranca
-//    de nuevo desde la primera.
-//    Poné cada archivo en la carpeta  photos/  y sumá su ruta a esta lista:
+// 🖼️ FOTOS — la "foto del día", EN ORDEN.
+//    La primera de la lista se muestra el primer día (18/6), la segunda el 19/6,
+//    y así una por día hasta el reencuentro. El cambio ocurre a la medianoche de
+//    Argentina, así vos (de viaje) y Cami ven siempre la misma foto el mismo día.
 const PHOTOS = [
-  "photos/2227f9fa-d8e2-488e-9383-c8e69c00a7e6.jpg",
-  "photos/497A4451-088A-4A75-867A-1452C0F4E652.jpg",
-  "photos/4B6CB847-4797-4B72-B58B-313426F782B5.jpg",
-  "photos/60d50b62-c128-407a-9d4d-b52ed3978772.jpg",
-  "photos/A30660E4-6658-45FD-B645-DC1C1A09634F.jpg",
-  "photos/IMG_2638.jpeg",
-  "photos/IMG_2644.jpg",
-  "photos/IMG_2653.jpeg",
-  "photos/IMG_3910.jpeg",
-  "photos/IMG_4146.jpeg",
-  "photos/IMG_4220.jpeg",
-  "photos/IMG_4223.jpeg",
-  "photos/IMG_4226.jpeg",
+  "photos/01.jpg",
+  "photos/02.jpeg",
+  "photos/03.jpeg",
+  "photos/04.jpeg",
+  "photos/05.jpeg",
+  "photos/06.jpeg",
+  "photos/07.jpg",
+  "photos/08.jpg",
+  "photos/09.jpeg",
+  "photos/10.jpeg",
+  "photos/11.jpg",
+  "photos/12.jpg",
 ];
 
 /* ╔══════════════════════════════════════════════════════════════╗
@@ -422,12 +428,13 @@ function celebrate(){
 /* ── render de la galería ─────────────────────────────────────── */
 const HEART_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
 
-// elige UNA foto según el día, igual para todos, anclada a la medianoche de Argentina
+// elige la foto del día EN ORDEN: día 0 = 18/6 (00:00 ART) → foto 01, día 1 → 02…
+// queda fija en la última cuando se llega al final. Anclada al huso de Argentina.
 function pickPhotoOfTheDay(){
   if (!PHOTOS.length) return "";
-  const ART_OFFSET = 3 * 3600 * 1000; // UTC-3
-  const dayNumber = Math.floor((Date.now() - ART_OFFSET) / 86400000);
-  const idx = ((dayNumber % PHOTOS.length) + PHOTOS.length) % PHOTOS.length;
+  const START_ART = Date.UTC(2026, 5, 18, 3, 0, 0); // 18/6 00:00 ART = 03:00 UTC
+  const day = Math.floor((Date.now() - START_ART) / 86400000);
+  const idx = Math.max(0, Math.min(PHOTOS.length - 1, day));
   return PHOTOS[idx];
 }
 
