@@ -185,27 +185,43 @@
     color:var(--ink-soft); margin-top:.7rem;
   }
 
-  /* ── foto del día (polaroid) ──────────────────────────────── */
+  /* ── foto del día (pila de polaroids) ─────────────────────── */
   .gallery{
     display:flex;
     justify-content:center;
     align-items:center;
     perspective:1200px;
   }
+  .stack{ position:relative; display:inline-block; }
   .polaroid{
     background:#fffdf7;
-    padding:.9rem .9rem 2.2rem;
+    padding:1rem 1rem 2.6rem;
     border-radius:3px;
     box-shadow:0 14px 38px var(--shadow), 0 3px 8px rgba(0,0,0,.1);
-    transition:transform .6s cubic-bezier(.2,.7,.2,1), box-shadow .6s;
+    width:clamp(280px,82vw,420px);
     cursor:default;
-    width:clamp(240px,72vw,360px);
-    transform:rotate(-2.2deg);
   }
-  .polaroid:hover{
+  /* la foto de hoy: arriba de todo, totalmente visible */
+  .polaroid--top{
+    position:relative;
+    z-index:5;
+    transform:rotate(-1.6deg);
+    transition:transform .6s cubic-bezier(.2,.7,.2,1), box-shadow .6s;
+  }
+  .polaroid--top:hover{
     transform:rotate(0deg) translateY(-10px) scale(1.03);
     box-shadow:0 26px 54px var(--shadow), 0 8px 16px rgba(0,0,0,.12);
   }
+  /* las demás: apiladas detrás, solo asomando */
+  .polaroid--back{
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    box-shadow:0 10px 26px rgba(58,42,35,.16);
+  }
+  .back1{ z-index:4; transform:rotate(3.5deg)  translate(14px,6px); }
+  .back2{ z-index:3; transform:rotate(-4.5deg) translate(-16px,12px); }
+  .back3{ z-index:2; transform:rotate(6deg)    translate(22px,18px); }
   .polaroid .photo{
     aspect-ratio:1/1;
     background:var(--paper-deep);
@@ -291,7 +307,8 @@
     .unit .lbl{ font-size:.5rem; letter-spacing:.08em; margin-top:.5rem; }
     .unit--sec .num{ font-size:clamp(1.05rem,7vw,1.7rem); }
 
-    .polaroid{ width:58vw; max-width:270px; padding:.7rem .7rem 1.4rem; }
+    .polaroid{ padding:.85rem .85rem 1.9rem; }
+    .polaroid--top{ width:64vw; max-width:300px; }
     .signoff{ margin-top:1.2rem; }
   }
 </style>
@@ -452,7 +469,13 @@ function renderGallery(){
   const inner = src
     ? `<img src="${src}" alt="" loading="lazy" />`
     : `<div class="ph">${HEART_SVG}<span>Foto del día</span></div>`;
-  $("gallery").innerHTML = `<figure class="polaroid"><div class="photo">${inner}</div></figure>`;
+  $("gallery").innerHTML = `
+    <div class="stack">
+      <figure class="polaroid polaroid--back back3"><div class="photo"></div></figure>
+      <figure class="polaroid polaroid--back back2"><div class="photo"></div></figure>
+      <figure class="polaroid polaroid--back back1"><div class="photo"></div></figure>
+      <figure class="polaroid polaroid--top"><div class="photo">${inner}</div></figure>
+    </div>`;
 }
 
 /* ── arranque ─────────────────────────────────────────────────── */
